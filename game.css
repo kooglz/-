@@ -111,29 +111,35 @@ h1 {
     justify-content: space-between;
     width: 100%;
     margin-bottom: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 12px 16px;
 }
 
 .info-item {
-    text-align: center;
+    flex: 1;
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    margin: 0 4px;
 }
 
 .info-label {
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 0.3rem;
-    font-weight: 500;
+    color: rgba(0, 71, 171, 0.9) !important;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    margin-bottom: 4px;
 }
 
 .info-value {
-    font-size: clamp(1.2rem, 3.5vw, 1.4rem);
-    font-weight: bold;
-    color: #0047ab;
+    color: #0047ab !important;
+    font-size: 20px;
+    font-weight: 700;
     text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
@@ -395,6 +401,17 @@ h1 {
     }
 }
 
+/* 手机横屏适配 */
+@media (orientation: landscape) {
+    .game-info {
+        padding: 8px 12px;
+    }
+    
+    .info-value {
+        font-size: 18px;
+    }
+}
+
 @media (min-width: 768px) {
     .container, .game-container {
         padding: 2rem;
@@ -438,6 +455,19 @@ h1 {
         box-shadow: 
             0 6px 24px rgba(4, 100, 255, 0.4),
             inset 0 1px 1px rgba(255,255,255,0.2);
+    }
+
+    .game-info, .next-balls {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .info-label {
+        color: rgba(0, 71, 171, 0.8) !important;
+    }
+    
+    .info-value {
+        color: #1864ab !important;
     }
     
     .menu-button::before {
@@ -496,6 +526,48 @@ h1 {
 .ball-moving {
     /* 移除动画效果，只保留基本的位置变化 */
     transition: none;
+}
+
+/* 下一回合区域优化 */
+.next-balls {
+    background: rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+.next-balls-text {
+    color: #0047ab !important;
+    opacity: 0.9;
+    font-weight: 500;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+/* 预览球样式升级 */
+.next-balls-preview .ball {
+    width: 32px;
+    height: 32px;
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.next-balls-preview .ball:hover {
+    transform: translateY(-2px);
+}
+
+/* 状态栏动态效果 */
+@keyframes status-pulse {
+    0% { opacity: 0.95; }
+    50% { opacity: 1; }
+    100% { opacity: 0.95; }
+}
+
+.game-info, .next-balls {
+    animation: status-pulse 3s ease-in-out infinite;
 }
 
 /* 珠子移动轨迹动画 */
