@@ -236,6 +236,26 @@
                             // 如果没有可消除的珠子，直接添加新的珠子
                             game.addNewBalls();
                             updateGameView(); // 更新游戏视图
+
+                            // 检查游戏是否结束
+                            if (game.isGameOver()) {
+                                // 触发粒子爆炸效果
+                                createParticleEffect();
+                                
+                                // 延迟执行确保动画播放
+                                setTimeout(() => {
+                                    // 添加棋盘消失动画
+                                    gameBoard.classList.add('ending');
+                                    
+                                    // 显示结束界面
+                                    showGameOver();
+                                    
+                                    // 禁用棋盘点击
+                                    document.querySelectorAll('.cell').forEach(cell => {
+                                        cell.style.pointerEvents = 'none';
+                                    });
+                                }, 800);
+                            }
                         }
                     }, 300);
                 }
