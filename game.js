@@ -102,90 +102,55 @@ class Game {
     }
 
     // 检查是否有可消除的珠子
+    // 安全访问棋盘格子
+    safeGetCell(y, x) {
+        if (y < 0 || y >= this.boardSize || x < 0 || x >= this.boardSize) return null;
+        return this.board[y][x];
+    }
+
     checkLines() {
         const lines = [];
-        
-        // 检查水平线
+        const directions = [
+            [0, 1],   // 水平
+            [1, 0],   // 垂直
+            [1, 1],   // 右下对角线
+            [1, -1]   // 左下对角线
+        ];
+
+        // 遍历棋盘每个单元格
         for (let y = 0; y < this.boardSize; y++) {
-            let count = 1;
-            let color = this.board[y][0];
-            let line = [[0, y]];
-            
-            for (let x = 1; x < this.boardSize; x++) {
-                if (this.board[y][x] === color && color !== null) {
-                    count++;
-                    line.push([x, y]);
-                } else {
-                    if (count >= 5) lines.push(line);
-                    count = 1;
-                    color = this.board[y][x];
-                    line = [[x, y]];
-                }
-            }
-            if (count >= 5) lines.push(line);
-        }
+            for (let x = 0; x < this.boardSize; x++) {
+                const currentColor = this.safeGetCell(y, x);
+                if (!currentColor) continue;
 
-        // 检查垂直线
-        for (let x = 0; x < this.boardSize; x++) {
-            let count = 1;
-            let color = this.board[0][x];
-            let line = [[x, 0]];
-            
-            for (let y = 1; y < this.boardSize; y++) {
-                if (this.board[y][x] === color && color !== null) {
-                    count++;
-                    line.push([x, y]);
-                } else {
-                    if (count >= 5) lines.push(line);
-                    count = 1;
-                    color = this.board[y][x];
-                    line = [[x, y]];
-                }
-            }
-            if (count >= 5) lines.push(line);
-        }
+                // 对四个方向进行检测
+                directions.forEach(([dy, dx]) => {
+                    // 边界预检：剩余空间是否足够形成五连珠
+                    if (y + 4*dy >= this.boardSize || x + 4*dx >= this.boardSize || 
+                        y + 4*dy < 0 || x + 4*dx < 0) return;
 
-        // 检查左上到右下对角线
-        for (let startY = 0; startY < this.boardSize; startY++) {
-            for (let startX = 0; startX < this.boardSize; startX++) {
-                let count = 1;
-                let color = this.board[startY][startX];
-                let line = [[startX, startY]];
-                
-                // 沿右下方向遍历
-                for (let i = 1; startX + i < this.boardSize && startY + i < this.boardSize; i++) {
-                    const currentColor = this.board[startY + i][startX + i];
-                    if (currentColor === color && color !== null) {
-                        count++;
-                        line.push([startX + i, startY + i]);
-                    } else {
-                        if (count >= 5) lines.push(line);
-                        break; // 颜色中断，跳出循环
+                    // 连续检测
+                    let count = 1;
+                    let line = [[x, y]];
+                    
+                    for (let step = 1; step <= 4; step++) {
+                        const nextY = y + dy*step;
+                        const nextX = x + dx*step;
+                        const nextColor = this.safeGetCell(nextY, nextX);
+                        
+                        if (nextColor === currentColor) {
+                            count++;
+                            line.push([nextX, nextY]);
+                        } else {
+                            break;
+                        }
                     }
-                }
-                if (count >= 5) lines.push(line);
-            }
-        }
 
-        // 检查右上到左下对角线
-        for (let startY = 0; startY < this.boardSize; startY++) {
-            for (let startX = 0; startX < this.boardSize; startX++) {
-                let count = 1;
-                let color = this.board[startY][startX];
-                let line = [[startX, startY]];
-                
-                // 沿左下方向遍历
-                for (let i = 1; startX - i >= 0 && startY + i < this.boardSize; i++) {
-                    const currentColor = this.board[startY + i][startX - i];
-                    if (currentColor === color && color !== null) {
-                        count++;
-                        line.push([startX - i, startY + i]);
-                    } else {
-                        if (count >= 5) lines.push(line);
-                        break; // 颜色中断，跳出循环
+                    // 发现五连珠时记录
+                    if (count >= 5) {
+                        lines.push(line);
                     }
-                }
-                if (count >= 5) lines.push(line);
+                });
             }
         }
 
