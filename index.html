@@ -400,20 +400,13 @@
                 gameOver.remove();
             }
             
-            // 移除动画类
-            const board = document.querySelector('.game-board');
-            board.classList.remove('ending');
-            board.style.opacity = '1';
-            board.style.transform = 'scale(1)';
-            
-            // 启用棋盘点击
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.style.pointerEvents = 'auto';
-            });
-            
-            // 重置游戏状态
-            game.init();
-            updateGameView();
+            // 重置游戏
+            if (game) {
+                game.reset();
+                updateGameView();
+                pauseButton.textContent = '暂停';
+                gameBoard.style.pointerEvents = 'auto';
+            }
         }
         
         // 粒子效果生成器
