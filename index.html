@@ -335,18 +335,57 @@
             gameOver.className = 'game-over';
             gameOver.innerHTML = `
                 <h2>游戏结束</h2>
-                <p>你的最终得分：${game.score}</p>
+                <p>最终得分: ${game.score}</p>
                 <button onclick="restartGame()">重新开始</button>
             `;
             document.body.appendChild(gameOver);
         }
 
+        // 粒子效果生成器
+        function createParticleEffect() {
+            const boardRect = document.querySelector('.game-board').getBoundingClientRect();
+            
+            for (let i = 0; i < 32; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'explosion-particle';
+                
+                // 随机运动参数
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 120 + 80;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                
+                // 随机位置
+                particle.style.left = `${Math.random() * boardRect.width}px`;
+                particle.style.top = `${Math.random() * boardRect.height}px`;
+                
+                document.querySelector('.game-board').appendChild(particle);
+                
+                // 自动移除元素
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
         // 重新开始游戏
         function restartGame() {
+            // 移除动画类
+            const board = document.querySelector('.game-board');
+            board.classList.remove('ending');
+            board.style.opacity = '1';
+            board.style.transform = 'scale(1)';
+            
+            // 启用棋盘点击
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.style.pointerEvents = 'auto';
+            });
+            
+            // 隐藏并移除结束界面
             const gameOver = document.querySelector('.game-over');
             if (gameOver) {
                 gameOver.remove();
             }
+            
+            // 重置游戏状态
             game.init();
             updateGameView();
         }

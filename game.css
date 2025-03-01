@@ -380,17 +380,44 @@ h1 {
 }
 
 /* 游戏结束弹窗 */
+/* 游戏结束动画 */
+@keyframes game-over-fade {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* 粒子爆炸动画 */
+@keyframes particle-burst {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(0);
+    opacity: 0;
+  }
+}
+
+/* 游戏结束弹窗增强 */
 .game-over {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95);
+    animation: game-over-fade 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    background: rgba(255, 255, 255, 0.98) !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     padding: 2rem;
     border-radius: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 71, 171, 0.1);
+    box-shadow: 0 12px 48px rgba(0, 71, 171, 0.2);
     text-align: center;
     z-index: 1000;
     width: 90%;
@@ -662,6 +689,39 @@ h1 {
 }
 
 /* 珠子消除动画 */
+/* 棋盘消失动画 */
+.game-board.ending {
+    animation: board-disappear 1s ease forwards;
+}
+
+@keyframes board-disappear {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* 结束弹窗按钮 */
+.game-over button {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.game-over button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 80%);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+}
+
+.game-over button:active::after {
+    transform: scale(1);
+}
+
 .ball.removing {
     animation: remove-ball 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
 }
@@ -672,8 +732,8 @@ h1 {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.9);
-    animation: particle-explode 1s ease-out forwards;
+    background: radial-gradient(circle, #4dabf7 20%, #0047ab 80%);
+    animation: particle-burst 0.8s ease-out forwards;
     pointer-events: none;
 }
 
@@ -742,6 +802,39 @@ h1 {
 }
 
 /* 珠子消除动画 */
+/* 棋盘消失动画 */
+.game-board.ending {
+    animation: board-disappear 1s ease forwards;
+}
+
+@keyframes board-disappear {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(0.8); }
+}
+
+/* 结束弹窗按钮 */
+.game-over button {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.game-over button::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.4) 10%, transparent 80%);
+    transform: scale(0);
+    transition: transform 0.4s ease;
+}
+
+.game-over button:active::after {
+    transform: scale(1);
+}
+
 .ball.removing {
     animation: remove-ball 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
 }
@@ -752,8 +845,8 @@ h1 {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.9);
-    animation: particle-explode 1s ease-out forwards;
+    background: radial-gradient(circle, #4dabf7 20%, #0047ab 80%);
+    animation: particle-burst 0.8s ease-out forwards;
     pointer-events: none;
 }
 
