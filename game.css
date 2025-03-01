@@ -16,24 +16,28 @@ body {
     width: 90%;
     max-width: 390px;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    background: rgba(30, 30, 30, 0.15);
+    backdrop-filter: blur(10px) brightness(0.98);
+    -webkit-backdrop-filter: blur(10px) brightness(0.98);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     margin: 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
 }
 
 /* 标题样式 */
 h1 {
-    color: white;
+    color: rgba(255, 255, 255, 0.9);
     text-align: center;
     font-size: clamp(1.8rem, 5vw, 2.5rem);
     margin-bottom: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
 }
 
 /* 按钮样式 */
@@ -42,8 +46,8 @@ h1 {
     padding: 0.8rem;
     margin: 0.5rem 0;
     font-size: clamp(1rem, 3vw, 1.1rem);
-    color: white;
-    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
@@ -51,6 +55,8 @@ h1 {
     cursor: pointer;
     transition: all 0.3s ease;
     -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 .menu-button:active {
@@ -364,6 +370,18 @@ h1 {
 
 /* 适配深色模式 */
 @media (prefers-color-scheme: dark) {
+    .container, .game-container {
+        background: rgba(0, 0, 0, 0.3);
+    }
+    
+    h1 {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    .menu-button {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
     .game-over {
         background: rgba(44, 62, 80, 0.95);
     }
@@ -375,6 +393,26 @@ h1 {
     .game-over p {
         color: #bdc3c7;
     }
+}
+
+/* 针对Safari的模糊优化 */
+@supports (-webkit-backdrop-filter: blur(10px)) {
+    .container, .game-container {
+        -webkit-backdrop-filter: blur(10px) saturate(180%);
+    }
+}
+
+/* 容器降级方案 */
+.container::before, .game-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: -1;
+    border-radius: 20px;
 }
 
 /* 珠子移动动画增强 */
