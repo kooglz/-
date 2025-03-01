@@ -1,0 +1,713 @@
+/* 全局样式 */
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0047ab, #1ca9c9);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    touch-action: manipulation;
+}
+
+/* 游戏容器样式 */
+.container, .game-container {
+    width: 90%;
+    max-width: 390px;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* 标题样式 */
+h1 {
+    color: white;
+    text-align: center;
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 按钮样式 */
+.menu-button {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    font-size: clamp(1rem, 3vw, 1.1rem);
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.menu-button:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* 游戏信息区域样式 */
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-item {
+    text-align: center;
+}
+
+.info-label {
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    font-size: clamp(1.2rem, 3.5vw, 1.4rem);
+    font-weight: bold;
+    color: white;
+}
+
+/* 游戏棋盘样式 */
+.game-board {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: min(0.5vw, 3px);
+    background: rgba(255, 255, 255, 0.15);
+    padding: min(0.5vw, 3px);
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    width: 100%;
+    aspect-ratio: 1;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cell {
+    aspect-ratio: 1;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+}
+
+.cell:active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* 珠子样式 */
+.ball {
+    width: 80%;
+    height: 80%;
+    border-radius: 50%;
+    box-shadow: inset -2px -2px 6px rgba(0, 0, 0, 0.2),
+                inset 2px 2px 6px rgba(255, 255, 255, 0.2);
+    transition: all 0.2s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+    position: relative;
+    z-index: 1;
+}
+
+.cell.selected .ball {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    /* 移除动画效果，只保留发光效果 */
+    /* animation: ball-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; */
+}
+
+@keyframes ball-shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+
+.ball.red {
+    background: radial-gradient(circle at 30% 30%, #ff6b6b, #c92a2a);
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+}
+
+.ball.yellow {
+    background: radial-gradient(circle at 30% 30%, #ffd43b, #f08c00);
+    box-shadow: 0 0 15px rgba(255, 212, 59, 0.6);
+}
+
+.ball.blue {
+    background: radial-gradient(circle at 30% 30%, #4dabf7, #1864ab);
+    box-shadow: 0 0 15px rgba(77, 171, 247, 0.6);
+}
+
+.ball.green {
+    background: radial-gradient(circle at 30% 30%, #69db7c, #2b8a3e);
+    box-shadow: 0 0 15px rgba(105, 219, 124, 0.6);
+}
+
+.cell.selected .ball {
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* 下一回合提示区域 */
+.next-balls {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.next-balls-text {
+    color: white;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.next-ball {
+    width: clamp(20px, 6vw, 24px);
+    height: clamp(20px, 6vw, 24px);
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.next-balls-preview {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.next-balls-preview .ball {
+    width: 30px;
+    height: 30px;
+}
+
+/* 暂停遮罩层 */
+.pause-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.pause-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: float 2s ease-in-out infinite;
+}
+
+.pause-icon::before,
+.pause-icon::after {
+    content: '';
+    width: 8px;
+    height: 30px;
+    background: #0047ab;
+    margin: 0 5px;
+    border-radius: 4px;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* 游戏结束弹窗 */
+.game-over {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+    width: 90%;
+    max-width: 400px;
+}
+
+.game-over h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: clamp(1.5rem, 4vw, 1.8rem);
+}
+
+.game-over p {
+    margin-bottom: 2rem;
+    color: #666;
+    font-size: clamp(1rem, 3vw, 1.1rem);
+}
+
+.game-over button {
+    padding: 0.8rem 1.5rem;
+    font-size: clamp(1rem, 3vw, 1.1rem);
+    background: linear-gradient(135deg, #0047ab, #1ca9c9);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.game-over button:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #003d91, #1899b9);
+}
+
+/* 媒体查询适配不同设备 */
+/* 游戏控制按钮样式 */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.control-button {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 1rem;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.control-button:active {
+    transform: scale(0.98);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 390px) {
+    .container, .game-container {
+        padding: 0.8rem;
+        margin: 0.3rem;
+    }
+
+    .game-board {
+        gap: 2px;
+        padding: 2px;
+    }
+
+    .control-button {
+        padding: 0.6rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .container, .game-container {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .cell:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .menu-button:hover {
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    .game-over button:hover {
+        background: linear-gradient(135deg, #003d91, #1899b9);
+    }
+}
+
+/* 适配深色模式 */
+@media (prefers-color-scheme: dark) {
+    .game-over {
+        background: rgba(44, 62, 80, 0.95);
+    }
+
+    .game-over h2 {
+        color: #ecf0f1;
+    }
+
+    .game-over p {
+        color: #bdc3c7;
+    }
+}
+
+/* 珠子移动动画增强 */
+/* 珠子移动动画效果 - 符合iOS设计规范 */
+@keyframes ball-pulse {
+    0% {
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 12px rgba(255, 255, 255, 0.5);
+    }
+    100% {
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+    }
+}
+
+.ball-moving {
+    /* 移除动画效果，只保留基本的位置变化 */
+    transition: none;
+}
+
+/* 珠子移动轨迹动画 */
+.path-dot {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    z-index: 0;
+    animation: dot-pulse 0.6s ease-out forwards;
+}
+
+@keyframes dot-pulse {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+/* 珠子消除动画 */
+.ball.removing {
+    animation: remove-ball 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+/* 新增粒子效果 */
+.explosion-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    animation: particle-explode 1s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes particle-explode {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(
+            calc(var(--dx) * 50px), 
+            calc(var(--dy) * 50px)
+        ) scale(0.2);
+    }
+}
+
+@keyframes remove-ball {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: brightness(1);
+    }
+    30% {
+        transform: scale(1.5);
+        filter: brightness(2);
+        box-shadow: 0 0 25px rgba(255,255,255,0.8);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+        filter: brightness(0);
+    }
+}
+
+/* 移动轨迹线效果 */
+.path-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    height: 3px;
+    transform-origin: left center;
+    z-index: 0;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    border-radius: 1.5px;
+    animation: line-flow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes line-flow {
+    0% {
+        transform: scaleX(0) translateX(-50%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.9) 30%,
+            rgba(255,255,255,0.9) 70%,
+            transparent 100%
+        );
+    }
+    100% {
+        transform: scaleX(1.2) translateX(50%);
+        opacity: 0;
+    }
+}
+
+/* 珠子消除动画 */
+.ball.removing {
+    animation: remove-ball 0.8s cubic-bezier(0.25, 0.1, 0.25, 1.0) forwards;
+}
+
+/* 新增粒子效果 */
+.explosion-particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    animation: particle-explode 1s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes particle-explode {
+    0% {
+        opacity: 1;
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(
+            calc(var(--dx) * 50px), 
+            calc(var(--dy) * 50px)
+        ) scale(0.2);
+    }
+}
+
+@keyframes remove-ball {
+    0% {
+        opacity: 1;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+    }
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    }
+    100% {
+        opacity: 0;
+        box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* 消除轨迹效果 */
+.line-effect {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+    height: 4px;
+    animation: line-trace 0.5s ease-out forwards;
+    transform-origin: left center;
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    border-radius: 2px;
+}
+
+@keyframes line-flow {
+    0% {
+        transform: scaleX(0) translateX(-50%);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            rgba(255,255,255,0.9) 30%,
+            rgba(255,255,255,0.9) 70%,
+            transparent 100%
+        );
+    }
+    100% {
+        transform: scaleX(1.2) translateX(50%);
+        opacity: 0;
+    }
+}
+/* iOS风格下拉面板 */
+.ios-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.ios-panel.show {
+    opacity: 1;
+}
+
+.panel-content {
+    width: 100%;
+    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 0 0 20px 20px;
+    transform: translateY(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ios-panel.show .panel-content {
+    transform: translateY(0);
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.panel-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.panel-close {
+    color: #0047ab;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.panel-body {
+    padding: 1rem;
+}
+
+/* 规则列表样式 */
+.rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.rule-number {
+    width: 24px;
+    height: 24px;
+    background: #0047ab;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.rule-text {
+    font-size: 1rem;
+    color: #2c3e50;
+    line-height: 1.5;
+}
+
+/* 排行榜样式 */
+.ranking-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.ranking-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.message-icon {
+    font-size: 3rem;
+}
+
+.message-text {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* 深色模式适配 */
+@media (prefers-color-scheme: dark) {
+    .panel-content {
+        background: rgba(44, 62, 80, 0.95);
+    }
+
+    .panel-title {
+        color: #ecf0f1;
+    }
+
+    .panel-close {
+        color: #3498db;
+    }
+
+    .rule-text {
+        color: #ecf0f1;
+    }
+
+    .message-text {
+        color: #bdc3c7;
+    }
+}

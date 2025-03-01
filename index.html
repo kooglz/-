@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>灵珠转世 - 五子连珠游戏</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div id="menu" class="container">
+        <h1>灵珠转世</h1>
+        <button class="menu-button" id="startGame">开始游戏</button>
+        <button class="menu-button" id="showRules">游戏规则</button>
+        <button class="menu-button" id="showSettings">游戏设置</button>
+        <button class="menu-button" id="showRanking">游戏排行</button>
+    </div>
+
+    <div id="gameScreen" class="game-container" style="display: none;">
+        <div id="pauseOverlay" class="pause-overlay" onclick="togglePause()">
+            <div class="pause-icon"></div>
+        </div>
+        <div class="game-info">
+            <div class="info-item">
+                <div class="info-label">分数</div>
+                <div class="info-value" id="score">0</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">等级</div>
+                <div class="info-value" id="level">1</div>
+            </div>
+        </div>
+
+        <div class="next-balls" id="nextBalls"></div>
+        <div class="game-board" id="gameBoard"></div>
+
+        <div class="game-controls">
+            <button id="pauseGame" class="control-button">暂停</button>
+            <button id="restartGame" class="control-button">重新开始</button>
+            <button id="backToMenu" class="control-button">返回菜单</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script>
+        let game = null;
+        const menu = document.getElementById('menu');
+        const gameScreen = document.getElementById('gameScreen');
+        const gameBoard = document.getElementById('gameBoard');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const nextBallsElement = document.getElementById('nextBalls');
+        const pauseButton = document.getElementById('pauseGame');
+
+        // 暂停/继续游戏
+        function togglePause() {
+            if (!game) return;
+            const isPaused = game.togglePause();
+            const pauseButton = document.getElementById('pauseGame');
+            const pauseOverlay = document.getElementById('pauseOverlay');
+            const gameBoard = document.getElementById('gameBoard');
+            
+            pauseButton.textContent = isPaused ? '继续' : '暂停';
+            gameBoard.style.pointerEvents = isPaused ? 'none' : 'auto';
+            pauseOverlay.style.display = isPaused ? 'flex' : 'none';
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            const gameOver = document.querySelector('.game-over');
+            if (gameOver) {
+                gameOver.remove();
+            }
+            if (game) {
+                game.reset();
+                updateGameView();
+                pauseButton.textContent = '暂停';
+                gameBoard.style.pointerEvents = 'auto';
+            }
+        }
+
+        // 事件监听器
+        document.getElementById('pauseGame').addEventListener('click', togglePause);
+        document.getElementById('restartGame').addEventListener('click', restartGame);
+
+        // 初始化游戏棋盘
+        function initializeBoard() {
+            gameBoard.innerHTML = '';
+            for (let y = 0; y < 9; y++) {
+                for (let x = 0; x < 9; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.x = x;
+                    cell.dataset.y = y;
+                    cell.addEventListener('click', handleCellClick);
+                    gameBoard.appendChild(cell);
+                }
+            }
+        }
+
+        // 更新游戏界面
+        function updateGameView() {
+            // 更新分数和等级
+            scoreElement.textContent = game.score;
+            levelElement.textContent = game.level;
+        
+            // 更新棋盘
+            const cells = gameBoard.getElementsByClassName('cell');
+            for (let y = 0; y < game.boardSize; y++) {
+                for (let x = 0; x < game.boardSize; x++) {
+                    const cell = cells[y * game.boardSize + x];
+                    const color = game.board[y][x];
+                    
+                    // 清除现有的珠子
+                    cell.innerHTML = '';
+                    cell.classList.remove('selected');
+                    
+                    // 如果有珠子，创建并添加珠子元素
+                    if (color) {
+                        const ball = document.createElement('div');
+                        ball.className = `ball ${color}`;
+                        cell.appendChild(ball);
+                        
+                        // 如果是选中的珠子，添加选中效果
+                        if (game.selectedBall && 
+                            game.selectedBall[0] === x && 
+                            game.selectedBall[1] === y) {
+                            cell.classList.add('selected');
+                        }
+                    }
+                }
+            }
+
+            // 更新下一回合提示文字和珠子
+            const nextBallsText = document.createElement('div');
+            nextBallsText.className = 'next-balls-text';
+            nextBallsText.textContent = '下一回合';
+            nextBallsElement.innerHTML = '';
+            nextBallsElement.appendChild(nextBallsText);
+
+            // 创建下一回合的珠子预览
+            const nextBallsPreview = document.createElement('div');
+            nextBallsPreview.className = 'next-balls-preview';
+            for (let i = 0; i < 3; i++) {
+                const nextBall = document.createElement('div');
+                nextBall.className = `ball ${game.nextBalls[i].color}`;
+                nextBallsPreview.appendChild(nextBall);
+            }
+            nextBallsElement.appendChild(nextBallsPreview);
+        }
+
+        // 处理格子点击事件
+        function handleCellClick(event) {
+            const cell = event.currentTarget;
+            const x = parseInt(cell.dataset.x);
+            const y = parseInt(cell.dataset.y);
+
+            if (game.board[y][x] !== null) {
+                // 选择珠子
+                if (game.selectedBall) {
+                    const [selectedX, selectedY] = game.selectedBall;
+                    if (selectedX === x && selectedY === y) {
+                        game.selectedBall = null;
+                    } else {
+                        game.selectedBall = [x, y];
+                    }
+                } else {
+                    game.selectedBall = [x, y];
+                }
+            } else if (game.selectedBall) {
+                // 移动珠子
+                const [fromX, fromY] = game.selectedBall;
+                if (game.moveBall(fromX, fromY, x, y)) {
+                    // 创建移动轨迹动画
+                    createMovePathAnimation(fromX, fromY, x, y);
+                    
+                    // 移动完成后检查是否有可消除的珠子
+                    setTimeout(() => {
+                        game.selectedBall = null;
+                        const lines = game.checkLines();
+                        
+                        if (lines.length > 0) {
+                            // 为每个珠子添加消除动画
+                            for (const line of lines) {
+                                for (const [x, y] of line) {
+                                    const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+                                    const ball = cell.querySelector('.ball');
+                                    if (ball) {
+                                        ball.classList.add('removing');
+                                    }
+                                }
+                            }
+                            
+                            // 等待动画完成后再移除珠子并添加新珠子
+                            setTimeout(() => {
+                                // 计算总共消除的珠子数量
+                                let totalRemoved = 0;
+                                for (const line of lines) {
+                                    totalRemoved += line.length;
+                                }
+                                
+                                game.removeBalls(lines);
+                                game.addNewBalls(); // 添加新的珠子
+                                updateGameView(); // 更新游戏视图
+                                
+                                // 添加粒子特效（针对5连及以上）
+                                if(totalRemoved >= 5) {
+                                    lines.forEach(line => {
+                                        line.forEach(([x, y]) => {
+                                            const cell = document.querySelector(`.cell[data-x="${x}"][data-y="${y}"]`);
+                                            createExplosionEffect(cell, line.length);
+                                        });
+                                    });
+                                }
+                                
+                                // 检查游戏是否结束
+                                if (game.isGameOver()) {
+                                    showGameOver();
+                                }
+                            }, 600);
+                        } else {
+                            // 如果没有可消除的珠子，直接添加新的珠子
+                            game.addNewBalls();
+                            updateGameView(); // 更新游戏视图
+                        }
+                    }, 300);
+                }
+            }
+            updateGameView();
+        }
+        
+        // 创建珠子移动轨迹动画
+        function createMovePathAnimation(fromX, fromY, toX, toY) {
+            // 获取起点和终点的位置
+            const fromCell = document.querySelector(`.cell[data-x="${fromX}"][data-y="${fromY}"]`);
+            const toCell = document.querySelector(`.cell[data-x="${toX}"][data-y="${toY}"]`);
+            
+            if (!fromCell || !toCell) return;
+            
+            const fromRect = fromCell.getBoundingClientRect();
+            const toRect = toCell.getBoundingClientRect();
+            
+            // 计算路径
+            const path = findPath(fromX, fromY, toX, toY);
+            
+            // 创建轨迹动画
+            for (let i = 0; i < path.length - 1; i++) {
+                const [x1, y1] = path[i];
+                const [x2, y2] = path[i + 1];
+                
+                const cell1 = document.querySelector(`.cell[data-x="${x1}"][data-y="${y1}"]`);
+                const cell2 = document.querySelector(`.cell[data-x="${x2}"][data-y="${y2}"]`);
+                
+                if (cell1 && cell2) {
+                    const rect1 = cell1.getBoundingClientRect();
+                    const rect2 = cell2.getBoundingClientRect();
+                    
+                    // 创建轨迹点
+                    const dot = document.createElement('div');
+                    dot.className = 'path-dot';
+                    cell1.appendChild(dot);
+                    
+                    // 创建轨迹线
+                    const line = document.createElement('div');
+                    line.className = 'path-line';
+                    
+                    // 计算线的长度和角度
+                    const dx = rect2.left - rect1.left;
+                    const dy = rect2.top - rect1.top;
+                    const length = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    // 设置线的样式
+                    line.style.width = `${length}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    line.style.left = `${rect1.width / 2}px`;
+                    line.style.top = `${rect1.height / 2}px`;
+                    
+                    cell1.appendChild(line);
+                    
+                    // 自动清理动画元素
+                    setTimeout(() => {
+                        if (dot.parentNode) dot.parentNode.removeChild(dot);
+                        if (line.parentNode) line.parentNode.removeChild(line);
+                    }, 800);
+                }
+            }
+        }
+        
+        // 使用BFS寻找路径
+        function findPath(fromX, fromY, toX, toY) {
+            const queue = [[fromX, fromY]];
+            const visited = new Set();
+            visited.add(`${fromX},${fromY}`);
+            const parent = {};
+            
+            while (queue.length > 0) {
+                const [x, y] = queue.shift();
+                if (x === toX && y === toY) {
+                    // 找到路径，回溯
+                    const path = [];
+                    let current = `${toX},${toY}`;
+                    while (current) {
+                        const [cx, cy] = current.split(',').map(Number);
+                        path.unshift([cx, cy]);
+                        current = parent[current];
+                    }
+                    return path;
+                }
+                
+                // 检查四个方向
+                const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+                for (const [dx, dy] of directions) {
+                    const newX = x + dx;
+                    const newY = y + dy;
+                    const key = `${newX},${newY}`;
+                    
+                    if (newX >= 0 && newX < game.boardSize &&
+                        newY >= 0 && newY < game.boardSize &&
+                        (game.board[newY][newX] === null || (newX === toX && newY === toY)) &&
+                        !visited.has(key)) {
+                        queue.push([newX, newY]);
+                        visited.add(key);
+                        parent[key] = `${x},${y}`;
+                    }
+                }
+            }
+            
+            // 如果没有找到路径，返回直线路径
+            return [[fromX, fromY], [toX, toY]];
+        }
+
+        // 显示游戏结束弹窗
+        function showGameOver() {
+            const gameOver = document.createElement('div');
+            gameOver.className = 'game-over';
+            gameOver.innerHTML = `
+                <h2>游戏结束</h2>
+                <p>你的最终得分：${game.score}</p>
+                <button onclick="restartGame()">重新开始</button>
+            `;
+            document.body.appendChild(gameOver);
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            const gameOver = document.querySelector('.game-over');
+            if (gameOver) {
+                gameOver.remove();
+            }
+            game.init();
+            updateGameView();
+        }
+        
+        // 新增粒子生成函数
+        function createExplosionEffect(cell, count) {
+            for(let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                const angle = (Math.PI * 2 * i) / 8;
+                particle.className = 'explosion-particle';
+                particle.style.setProperty('--dx', Math.cos(angle));
+                particle.style.setProperty('--dy', Math.sin(angle));
+                particle.style.left = `${cell.offsetWidth/2 -4}px`;
+                particle.style.top = `${cell.offsetHeight/2 -4}px`;
+                cell.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        // 事件监听器
+        document.getElementById('startGame').addEventListener('click', () => {
+            menu.style.display = 'none';
+            gameScreen.style.display = 'flex';
+            game = new Game();
+            game.init();
+            initializeBoard();
+            updateGameView();
+        });
+
+        document.getElementById('backToMenu').addEventListener('click', () => {
+            gameScreen.style.display = 'none';
+            menu.style.display = 'block';
+        });
+
+        // 创建下拉面板
+        function createPanel(title, content) {
+            const panel = document.createElement('div');
+            panel.className = 'ios-panel';
+            panel.innerHTML = `
+                <div class="panel-content">
+                    <div class="panel-header">
+                        <div class="panel-title">${title}</div>
+                        <button class="panel-close">完成</button>
+                    </div>
+                    <div class="panel-body">${content}</div>
+                </div>
+            `;
+            document.body.appendChild(panel);
+
+            // 添加动画
+            requestAnimationFrame(() => {
+                panel.classList.add('show');
+            });
+
+            // 关闭按钮事件
+            panel.querySelector('.panel-close').addEventListener('click', () => {
+                panel.classList.remove('show');
+                setTimeout(() => panel.remove(), 300);
+            });
+
+            // 滑动关闭
+            let startY = 0;
+            panel.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+            });
+
+            panel.addEventListener('touchmove', (e) => {
+                const deltaY = e.touches[0].clientY - startY;
+                if (deltaY > 0) {
+                    panel.style.transform = `translateY(${deltaY}px)`;
+                }
+            });
+
+            panel.addEventListener('touchend', (e) => {
+                const deltaY = e.changedTouches[0].clientY - startY;
+                if (deltaY > 100) {
+                    panel.classList.remove('show');
+                    setTimeout(() => panel.remove(), 300);
+                } else {
+                    panel.style.transform = '';
+                }
+            });
+        }
+
+        document.getElementById('showRules').addEventListener('click', () => {
+            const rulesContent = `
+                <div class="rules-list">
+                    <div class="rule-item">
+                        <div class="rule-number">1</div>
+                        <div class="rule-text">每回合可以移动一个珠子到空位置</div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-number">2</div>
+                        <div class="rule-text">每次移动后会随机出现3个新珠子</div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-number">3</div>
+                        <div class="rule-text">将5个或更多相同颜色的珠子连成一线即可消除</div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-number">4</div>
+                        <div class="rule-text">消除的珠子越多，获得的分数越高</div>
+                    </div>
+                    <div class="rule-item">
+                        <div class="rule-number">5</div>
+                        <div class="rule-text">当棋盘空位少于3个时游戏结束</div>
+                    </div>
+                </div>
+            `;
+            createPanel('游戏规则', rulesContent);
+        });
+
+        document.getElementById('showSettings').addEventListener('click', () => {
+            window.location.href = 'settings.html';
+        });
+
+        document.getElementById('showRanking').addEventListener('click', () => {
+            const rankingContent = `
+                <div class="ranking-content">
+                    <div class="ranking-message">
+                        <div class="message-icon">🏆</div>
+                        <div class="message-text">游戏排行功能即将推出，敬请期待！</div>
+                    </div>
+                </div>
+            `;
+            createPanel('游戏排行', rankingContent);
+        });
+    </script>
+</body>
+</html>

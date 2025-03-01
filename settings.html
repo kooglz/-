@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏设置 - 灵珠转世</title>
+    <link rel="stylesheet" href="game.css">
+    <style>
+        .settings-container {
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            margin: 2rem auto;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e1e1e1;
+        }
+
+        .settings-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .settings-close {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            color: #4a90e2;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-label {
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .settings-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        /* iOS风格开关 */
+        .ios-switch {
+            position: relative;
+            display: inline-block;
+            width: 51px;
+            height: 31px;
+        }
+
+        .ios-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .ios-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e9e9ea;
+            transition: .4s;
+            border-radius: 31px;
+        }
+
+        .ios-slider:before {
+            position: absolute;
+            content: "";
+            height: 27px;
+            width: 27px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .ios-slider {
+            background-color: #4cd964;
+        }
+
+        input:checked + .ios-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* iOS风格选择器 */
+        .ios-select {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            color: #2c3e50;
+            border: 1px solid #e1e1e1;
+            border-radius: 8px;
+            background-color: #fff;
+            appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%23000000" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 30px;
+        }
+
+        /* iOS风格滑块 */
+        .ios-range {
+            -webkit-appearance: none;
+            width: 200px;
+            height: 2px;
+            background: #e1e1e1;
+            outline: none;
+            border-radius: 1px;
+        }
+
+        .ios-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            background: #fff;
+            border-radius: 50%;
+            border: 1px solid #e1e1e1;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="settings-container">
+        <div class="settings-header">
+            <div class="settings-title">游戏设置</div>
+            <button class="settings-close" id="closeSettings">完成</button>
+        </div>
+
+        <div class="settings-section">
+            <div class="settings-item">
+                <div>
+                    <div class="settings-label">音效</div>
+                    <div class="settings-description">开启/关闭游戏音效</div>
+                </div>
+                <label class="ios-switch">
+                    <input type="checkbox" id="soundEffect" checked>
+                    <span class="ios-slider"></span>
+                </label>
+            </div>
+
+            <div class="settings-item">
+                <div>
+                    <div class="settings-label">游戏难度</div>
+                    <div class="settings-description">调整新珠子生成速度</div>
+                </div>
+                <select class="ios-select" id="gameDifficulty">
+                    <option value="easy">简单</option>
+                    <option value="normal" selected>普通</option>
+                    <option value="hard">困难</option>
+                </select>
+            </div>
+
+            <div class="settings-item">
+                <div>
+                    <div class="settings-label">主题</div>
+                    <div class="settings-description">选择游戏界面主题</div>
+                </div>
+                <select class="ios-select" id="gameTheme">
+                    <option value="light" selected>浅色</option>
+                    <option value="dark">深色</option>
+                </select>
+            </div>
+
+            <div class="settings-item">
+                <div>
+                    <div class="settings-label">操作方式</div>
+                    <div class="settings-description">选择珠子移动方式</div>
+                </div>
+                <select class="ios-select" id="controlType">
+                    <option value="click" selected>点击</option>
+                    <option value="drag">拖拽</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取所有设置元素
+        const soundEffect = document.getElementById('soundEffect');
+        const gameDifficulty = document.getElementById('gameDifficulty');
+        const gameTheme = document.getElementById('gameTheme');
+        const controlType = document.getElementById('controlType');
+        const closeButton = document.getElementById('closeSettings');
+
+        // 从localStorage加载设置
+        function loadSettings() {
+            soundEffect.checked = localStorage.getItem('soundEffect') !== 'false';
+            gameDifficulty.value = localStorage.getItem('gameDifficulty') || 'normal';
+            gameTheme.value = localStorage.getItem('gameTheme') || 'light';
+            controlType.value = localStorage.getItem('controlType') || 'click';
+        }
+
+        // 保存设置到localStorage
+        function saveSettings() {
+            localStorage.setItem('soundEffect', soundEffect.checked);
+            localStorage.setItem('gameDifficulty', gameDifficulty.value);
+            localStorage.setItem('gameTheme', gameTheme.value);
+            localStorage.setItem('controlType', controlType.value);
+        }
+
+        // 添加事件监听器
+        soundEffect.addEventListener('change', saveSettings);
+        gameDifficulty.addEventListener('change', saveSettings);
+        gameTheme.addEventListener('change', saveSettings);
+        controlType.addEventListener('change', saveSettings);
+
+        // 关闭按钮事件
+        closeButton.addEventListener('click', () => {
+            saveSettings();
+            window.location.href = 'index.html';
+        });
+
+        // 初始加载设置
+        loadSettings();
+    </script>
+</body>
+</html>
