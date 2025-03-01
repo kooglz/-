@@ -107,62 +107,64 @@ h1 {
 
 /* 游戏信息区域样式 */
 .game-info {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 1rem;
-    background: rgba(255, 255, 255, 0.25) !important;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    border-radius: 13px;
-    padding: 12px 16px;
-    width: 94%;
-    margin: 0 auto 1rem;
-    box-shadow: 0 4px 20px rgba(0, 71, 171, 0.1);
+    background: rgba(255, 255, 255, 0.28) !important;
+    backdrop-filter: blur(24px) saturate(2);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 16px;
+    width: 92%;
+    margin: 0 auto 1.2rem;
+    padding: 14px 0;
+    box-shadow: 0 6px 24px rgba(0, 71, 171, 0.08);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .info-item {
-    flex: 1;
     padding: 10px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 12px;
+    border: 0.5px solid rgba(255, 255, 255, 0.2);
     margin: 0 6px;
-    box-sizing: border-box;
-    border: 0.5px solid rgba(255, 255, 255, 0.3);
 }
 
 .info-label {
-    color: #0047ab !important;
-    opacity: 0.9;
-    font-size: 14px;
+    color: #0047AB !important;
+    font-size: 13px;
     font-weight: 600;
     letter-spacing: -0.24px;
+    opacity: 0.9;
+    margin-bottom: 4px;
 }
 
 .info-value {
-    color: #0047ab !important;
-    font-size: 22px;
+    color: #0047AB !important;
+    font-size: 24px;
     font-weight: 700;
-    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.4);
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 .next-balls {
-    background: rgba(255, 255, 255, 0.25) !important;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    width: 94%;
-    margin: 0 auto 1.2rem;
+    background: rgba(255, 255, 255, 0.28) !important;
+    width: 92%;
+    margin: 0 auto 1.6rem;
+    padding: 14px 16px;
+    border-radius: 16px;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .next-balls-text {
-    color: #0047ab !important;
-    opacity: 0.95;
+    color: #0047AB !important;
     font-size: 15px;
     font-weight: 500;
+    margin-bottom: 10px;
+    opacity: 0.95;
 }
 
 .container {
     box-sizing: border-box;
-    padding: 16px !important;
+    padding: 18px !important;
 }
 
 @media (max-width: 414px) {
@@ -181,10 +183,32 @@ h1 {
     }
 }
 
-@media (orientation: landscape) {
+/* iPhone15专属适配 */
+@media (device-width: 393px) and (device-height: 852px) {
     .game-info {
         width: 88%;
-        margin-bottom: 0.8rem;
+        padding: 12px 0;
+    }
+    
+    .info-value {
+        font-size: 22px;
+    }
+    
+    .next-balls {
+        padding: 12px;
+        margin-bottom: 1.4rem;
+    }
+}
+
+/* 横屏保护 */
+@media (orientation: landscape) {
+    .game-info {
+        width: 86%;
+        margin-bottom: 1rem;
+    }
+    
+    .info-value {
+        font-size: 20px;
     }
 }
 
@@ -301,7 +325,7 @@ h1 {
 .next-balls-preview {
     display: flex;
     justify-content: center;
-    gap: 0.8rem;
+    gap: 12px;
     margin-top: 0.5rem;
     padding: 0 0.5rem;
 }
