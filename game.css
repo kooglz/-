@@ -13,31 +13,33 @@ body {
 
 /* 游戏容器样式 */
 .container, .game-container {
-    width: 90%;
+    width: 90vw;
     max-width: 390px;
-    padding: 1rem;
-    background: rgba(30, 30, 30, 0.15);
+    margin: 0 auto;
+    padding: 1rem env(safe-area-inset-right) 1rem env(safe-area-inset-left);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px) brightness(0.98);
     -webkit-backdrop-filter: blur(10px) brightness(0.98);
     border-radius: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin: 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
+    box-sizing: border-box;
 }
 
 /* 标题样式 */
 h1 {
-    color: rgba(255, 255, 255, 0.9);
+    color: rgba(255, 255, 255, 1);
     text-align: center;
     font-size: clamp(1.8rem, 5vw, 2.5rem);
     margin-bottom: 1.5rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     position: relative;
     z-index: 1;
-    -webkit-text-stroke: 1px rgba(0, 0, 0, 0.3);
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 /* 按钮样式 */
@@ -46,22 +48,61 @@ h1 {
     padding: 0.8rem;
     margin: 0.5rem 0;
     font-size: clamp(1rem, 3vw, 1.1rem);
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
+    color: white;
+    background: linear-gradient(135deg, 
+        rgba(130, 201, 255, 0.7),
+        rgba(4, 100, 255, 0.9));
+    backdrop-filter: blur(15px) saturate(200%);
+    -webkit-backdrop-filter: blur(15px) saturate(200%);
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    box-shadow: 
+        0 6px 24px rgba(4, 100, 255, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+    transition: 
+        transform 0.2s ease,
+        box-shadow 0.3s ease,
+        background 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     -webkit-tap-highlight-color: transparent;
     position: relative;
     z-index: 1;
 }
 
 .menu-button:active {
-    transform: scale(0.98);
-    background: rgba(255, 255, 255, 0.25);
+    transform: scale(0.96) translateY(1px);
+    box-shadow: 
+        0 3px 12px rgba(4, 100, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.menu-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(135deg, 
+        rgba(255,255,255,0.15),
+        transparent 60%);
+    pointer-events: none;
+}
+
+.menu-button::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, 
+        rgba(255,255,255,0.4),
+        rgba(255,255,255,0));
+    z-index: -1;
+    opacity: 0.6;
 }
 
 /* 游戏信息区域样式 */
@@ -71,7 +112,7 @@ h1 {
     width: 100%;
     margin-bottom: 1rem;
     padding: 1rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 15px;
@@ -84,34 +125,38 @@ h1 {
 
 .info-label {
     font-size: clamp(0.8rem, 2.5vw, 0.9rem);
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.3rem;
+    font-weight: 500;
 }
 
 .info-value {
     font-size: clamp(1.2rem, 3.5vw, 1.4rem);
     font-weight: bold;
-    color: white;
+    color: #0047ab;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.3);
 }
 
 /* 游戏棋盘样式 */
 .game-board {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
-    gap: min(0.5vw, 3px);
+    gap: 2px;
+    padding: 2px;
     background: rgba(255, 255, 255, 0.15);
-    padding: min(0.5vw, 3px);
     border-radius: 15px;
     margin-bottom: 1rem;
     width: 100%;
+    max-height: 85vh;
     aspect-ratio: 1;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
 .cell {
     aspect-ratio: 1;
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 8px;
@@ -181,7 +226,7 @@ h1 {
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 1rem;
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     border-radius: 15px;
@@ -288,7 +333,7 @@ h1 {
 .game-over button {
     padding: 0.8rem 1.5rem;
     font-size: clamp(1rem, 3vw, 1.1rem);
-    background: linear-gradient(135deg, #0047ab, #1ca9c9);
+    background: linear-gradient(135deg, #4dabf7, #1864ab);
     color: white;
     border: none;
     border-radius: 15px;
@@ -316,12 +361,13 @@ h1 {
     flex: 1;
     padding: 0.8rem;
     font-size: 1rem;
-    color: white;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 1);
+    background: linear-gradient(135deg, rgba(130, 201, 255, 0.6), rgba(4, 100, 255, 0.8));
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(4, 100, 255, 0.2);
     cursor: pointer;
     transition: all 0.3s ease;
     -webkit-tap-highlight-color: transparent;
@@ -360,7 +406,13 @@ h1 {
     }
 
     .menu-button:hover {
-        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 
+            0 8px 32px rgba(4, 100, 255, 0.5),
+            inset 0 2px 4px rgba(255, 255, 255, 0.4);
+        background: linear-gradient(135deg, 
+            rgba(150, 210, 255, 0.8),
+            rgba(4, 100, 255, 1));
     }
 
     .game-over button:hover {
@@ -371,7 +423,7 @@ h1 {
 /* 适配深色模式 */
 @media (prefers-color-scheme: dark) {
     .container, .game-container {
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.1);
     }
     
     h1 {
@@ -379,11 +431,23 @@ h1 {
     }
     
     .menu-button {
-        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255,255,255,0.3);
+        background: linear-gradient(135deg, 
+            rgba(77, 171, 247, 0.8),
+            rgba(4, 100, 255, 1));
+        box-shadow: 
+            0 6px 24px rgba(4, 100, 255, 0.4),
+            inset 0 1px 1px rgba(255,255,255,0.2);
+    }
+    
+    .menu-button::before {
+        background: linear-gradient(135deg, 
+            rgba(255,255,255,0.3),
+            transparent);
     }
 
     .game-over {
-        background: rgba(44, 62, 80, 0.95);
+        background: rgba(255, 255, 255, 0.95);
     }
 
     .game-over h2 {
